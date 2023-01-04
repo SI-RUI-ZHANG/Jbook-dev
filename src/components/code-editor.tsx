@@ -1,9 +1,7 @@
 import MonacoEditor, {OnChange} from '@monaco-editor/react';
-import React, {FC, MouseEventHandler} from 'react';
-// import prettier from 'prettier';
-// import parser from 'prettier/parser-babel';
-import {Connect} from "vite";
-// import HandleFunction = Connect.HandleFunction;
+import React, {FC, useRef} from 'react';
+import {editor} from "monaco-editor";
+import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 
 interface CodeEditorProps {
   initialValue: string;
@@ -12,19 +10,25 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
+  const editorRef = useRef<IStandaloneCodeEditor>();
+
   // TODO: add typescript support
-  // const onChangeHandler: OnChange = (value) => {
-  //   onChange(value);
-  // };
-  //
-  // const onFormatHandler
-  //   : MouseEventHandler<HTMLButtonElement> = (event) => {
-  // }
+  const onChangeHandler: OnChange = (value) => {
+    onChange(value);
+  };
+
+  const onFormatHandler = () => {
+    if (!editorRef.current) {
+      return;
+    }
+    editorRef.current.getAction('editor.action.formatDocument').run();
+  };
   return (
     <div>
-      {/*<button onClick={onFormatHandler}>Format</button>*/}
+      <button id={'formatter'} onClick={onFormatHandler}>Format</button>
       <MonacoEditor
-        // onChange={onChangeHandler}
+        onChange={onChangeHandler}
+        onMount={(editor) => {editorRef.current = editor;}}
         value={initialValue}
         height={'50vh'}
         language={'javascript'}
