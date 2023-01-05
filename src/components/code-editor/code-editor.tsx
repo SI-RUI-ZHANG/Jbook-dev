@@ -3,6 +3,7 @@ import React, {FC, useRef} from 'react';
 import {editor} from "monaco-editor";
 import {useCallback} from "react";
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
+import './code-editor.scss'
 import {
   MonacoJsxSyntaxHighlight,
   getWorker
@@ -18,7 +19,38 @@ interface CodeEditorProps {
 const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
 
-  // TODO: add typescript support
+  const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
+    editorRef.current = editor;
+    onChange(initialValue);
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      jsx: monaco.languages.typescript.JsxEmit.Preserve,
+      target: monaco.languages.typescript.ScriptTarget.ES2020,
+      esModuleInterop: true
+    });
+
+    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
+      getWorker(),
+      monaco
+    );
+
+    // editor is the result of monaco.editor.create
+    const {
+      highlighter,
+      dispose
+    } = monacoJsxSyntaxHighlight.highlighterBuilder({
+      editor: editor
+    });
+    // init highlight
+    highlighter();
+
+    editor.onDidChangeModelContent(() => {
+      // content change, highlight
+      highlighter();
+    });
+
+    return dispose;
+  }, []);
+
   const onChangeHandler: OnChange = (value) => {
     onChange(value);
   };
@@ -30,7 +62,7 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
     editorRef.current.getAction('editor.action.formatDocument').run();
   };
   return (
-    <div className={'group z-0'}>
+    <div className={'group z-0 m-2 relative'}>
       <button
         id={'formatter'}
         onClick={onFormatHandler}
@@ -43,12 +75,15 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
         Format
       </button>
       <MonacoEditor
+        className={'editor'}
         onChange={onChangeHandler}
-        onMount={(editor) => {editorRef.current = editor;}}
+        // onMount={(editor) => {editorRef.current = editor;}}
+        onMount={handleEditorDidMount}
         value={initialValue}
         height={'50vh'}
-        language={'javascript'}
+        language={'typescript'}
         theme={'vs-dark'}
+        path={"file:///index.tsx"}
         options={{
           minimap: {enabled: false},
           wordWrap: 'on',

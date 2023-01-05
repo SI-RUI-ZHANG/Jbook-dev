@@ -10,10 +10,10 @@ export const fetchPlugin = (inputCode: string) => {
   return {
     name: 'fetch-plugin',
     setup(build: esbuild.PluginBuild) {
-      // handle root entry file of 'index.js'
-      build.onLoad({filter: /(^index\.js$)/}, async (args: any) => {
+      // handle root entry file of 'index.ts'
+      build.onLoad({filter: /(^index\.ts$)/}, async (args: any) => {
         return {
-          loader: 'jsx',
+          loader: 'tsx',
           contents: inputCode,
         };
       });
@@ -46,7 +46,7 @@ export const fetchPlugin = (inputCode: string) => {
         `;
 
         const result: esbuild.OnLoadResult = {
-          loader: 'jsx',
+          loader: 'tsx',
           contents,
           // this is for caching
           resolveDir: new URL('./', request.responseURL).pathname,
@@ -59,12 +59,12 @@ export const fetchPlugin = (inputCode: string) => {
       });
 
 
-      // handle .js file
+      // handle .ts file
       build.onLoad({filter: /.*/}, async (args: any) => {
         const {data, request} = await axios.get(args.path);
 
         const result: esbuild.OnLoadResult = {
-          loader: 'jsx',
+          loader: 'tsx',
           contents: data,
           // resolveDir: the directory where the file was found
           // this variable will be provided to the onResolve function
