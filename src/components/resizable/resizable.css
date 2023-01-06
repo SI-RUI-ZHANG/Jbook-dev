@@ -13,20 +13,21 @@
     flex-direction: row;
 }
 
-.react-resizable-handle:hover {
+.react-resizable-handle:hover, .react-resizable-handle:active {
     opacity: 90%;
     box-shadow: rgba(255, 255, 255, 0.33) 0 0 2px 1px;
 }
 
 .react-resizable-handle-s {
+    margin-top: 3px;
     display: block;
-    height: 4px;
+    height: 2px;
     width: 100%;
     cursor: row-resize;
 }
 
 .react-resizable-handle-e {
-    width: 6px;
+    width: 2px;
     height: 100%;
     cursor: col-resize;
 }

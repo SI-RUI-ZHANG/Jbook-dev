@@ -8,20 +8,22 @@ import {
   MonacoJsxSyntaxHighlight,
   getWorker
 } from "monaco-jsx-syntax-highlight";
+import bundler from "../../bundler";
 
 
 interface CodeEditorProps {
   initialValue: string;
 
-  onChange(value?: string): void;
+  setCode: React.Dispatch<string>;
+  setBundleErr: React.Dispatch<string | null>;
 }
 
-const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
+const CodeEditor: FC<CodeEditorProps> = ({initialValue, setCode, setBundleErr}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
+  const [input, setInput] = React.useState(initialValue);
 
   const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
     editorRef.current = editor;
-    onChange(initialValue);
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       jsx: monaco.languages.typescript.JsxEmit.Preserve,
       target: monaco.languages.typescript.ScriptTarget.ES2020,
@@ -52,7 +54,7 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
   }, []);
 
   const onChangeHandler: OnChange = (value) => {
-    onChange(value);
+    setInput(value ?? '');
   };
 
   const onFormatHandler = () => {
@@ -61,15 +63,32 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
     }
     editorRef.current.getAction('editor.action.formatDocument').run();
   };
+
+  const onCodeRunHandler = async () => {
+    const output = await bundler(input);
+    if (output.err) {
+      setCode('');
+      return setBundleErr(output.result);
+    }
+    setBundleErr(null);
+    setCode(output.result);
+  }
   return (
-    <div className={'group/editor fade h-full w-[calc(100%-6px)]'}>
-      <button
-        id={'formatter'}
-        onClick={onFormatHandler}
-        className={`absolute z-10 right-2 bottom-2 btn-group-fade`}
-      >
-        FORMAT
-      </button>
+    <div className={'group/editor fade h-full w-[calc(100%-2px)]'}>
+      <div className={'absolute z-10 right-2 bottom-2 flex gap-1'}>
+        <button
+          onClick={onCodeRunHandler}
+          className={`btn-group-fade`}
+        >
+          RUN
+        </button>
+        <button
+          onClick={onFormatHandler}
+          className={`btn-group-fade`}
+        >
+          FORMAT
+        </button>
+      </div>
       <MonacoEditor
         className={'editor'}
         onChange={onChangeHandler}

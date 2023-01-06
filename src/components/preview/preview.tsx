@@ -1,25 +1,34 @@
-import React, {FC, useEffect, useRef} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import './preview.css'
 
 interface PreviewProps {
   code: string;
+  bundleErr: string | null;
 }
 
 const html = `
-<html lang="en" >
+<html lang="en" style="color: white">
 <head> <title>frame</title> </head>
 <body>
-<div id="root">Hi there</div>
+<div id="root"></div>
 <script>
 <!-- receive message event posted my parent frame --> 
- window.addEventListener('message', (event) => {
+const handleError = (err) => {
+  const root = document.querySelector('#root');
+  root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+  console.error(err);
+};
+
+window.addEventListener('error', (event) => {
+  event.preventDefault();
+  handleError(event.error);
+})
+
+window.addEventListener('message', (event) => {
    try {
-     eval(event.data);
+      eval(event.data);
    } catch (e) {
-     const root = document.querySelector('#root');
-     root.innerHTML = '<div style="color:red;"><h4>Runtime Error</h4>' + e + '</div>'
-     // log error so that user can see detailed information in the console
-     console.error(e);
+      handleError(e);
    }
  }, false);
 </script>
@@ -27,22 +36,32 @@ const html = `
 </html>
 `;
 
-const Preview: FC<PreviewProps> = ({code}) => {
+const Preview: FC<PreviewProps> = ({code, bundleErr}) => {
   const iframe = useRef<any>();
+  const [hide, setHide] = useState<boolean>(true);
 
   useEffect(() => {
+    setHide(true);
     iframe.current.srcdoc = html;
-    iframe.current.contentWindow.postMessage(code, '*');
+    setTimeout(() => {
+      iframe.current.contentWindow.postMessage(code, '*');
+    }, 30)
+
+    setTimeout(() => {
+      setHide(false);
+    },50)
   }, [code]);
 
   return (
-    <div className={'iframe-wrapper grow h-full'}>
+    <div className={'relative iframe-wrapper grow h-full bg-neutral-800'}>
       <iframe
-        className={'h-full w-full bg-white'}
+        style={{display: hide ? 'none' : 'block'}}
+        className={`h-full w-full bg-neutral-800 relative`}
         ref={iframe}
         sandbox={"allow-scripts"}
         srcDoc={html}
       />
+      {bundleErr && <div className={'preview-error'}>{bundleErr}</div>}
     </div>
   );
 };

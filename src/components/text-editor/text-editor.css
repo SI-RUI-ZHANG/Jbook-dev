@@ -1,0 +1,38 @@
+
+.text-editor .w-md-editor-bar svg {
+    display: none;
+    position: relative;
+}
+
+.text-editor .w-md-editor-bar {
+    border-radius: 0;
+    position: absolute;
+    bottom: 4px;
+    width: 100%;
+    height: 2px;
+    display: block;
+    background-color: white;
+    opacity: 10%;
+    transition: 0.4s;
+}
+
+
+.text-editor .w-md-editor-bar:hover {
+    opacity: 90%;
+    box-shadow: rgba(255, 255, 255, 0.33) 0 0 2px 1px;
+}
+
+.w-md-editor-toolbar {
+    background-color: #262626;
+}
+
+.w-md-editor {
+    background-color: #262626;
+    border-radius: 0;
+    padding-bottom: .5rem;
+}
+
+.wmde-markdown {
+    background-color: #262626;
+    padding: 0 1rem .2rem;
+}
