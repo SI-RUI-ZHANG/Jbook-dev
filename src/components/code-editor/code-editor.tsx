@@ -3,7 +3,7 @@ import React, {FC, useRef} from 'react';
 import {editor} from "monaco-editor";
 import {useCallback} from "react";
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
-import './code-editor.scss'
+import './code-editor.scss';
 import {
   MonacoJsxSyntaxHighlight,
   getWorker
@@ -62,17 +62,13 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
     editorRef.current.getAction('editor.action.formatDocument').run();
   };
   return (
-    <div className={'group z-0 m-2 relative'}>
+    <div className={'group/editor fade h-full w-[calc(100%-6px)]'}>
       <button
         id={'formatter'}
         onClick={onFormatHandler}
-        className={`
-        absolute z-10 right-2 top-2 text-white bg-red-400 px-2 py-1 opacity-0 rounded-sm
-        group-hover:opacity-60 transition duration-200 font-medium
-        hover:!opacity-100 active:bg-red-500
-        `}
+        className={`absolute z-10 right-2 bottom-2 btn-group-fade`}
       >
-        Format
+        FORMAT
       </button>
       <MonacoEditor
         className={'editor'}
@@ -80,7 +76,7 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, onChange}) => {
         // onMount={(editor) => {editorRef.current = editor;}}
         onMount={handleEditorDidMount}
         value={initialValue}
-        height={'50vh'}
+        height={'100%'}
         language={'typescript'}
         theme={'vs-dark'}
         path={"file:///index.tsx"}

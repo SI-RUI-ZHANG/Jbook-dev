@@ -1,10 +1,10 @@
 import * as esbuild from 'esbuild-wasm';
-import {unpkgPathPlugin} from "../plugins/unpkg-path-plugins";
-import {fetchPlugin} from "../plugins/fetch-plugin";
+import {unpkgPathPlugin} from "./plugins/unpkg-path-plugins";
+import {fetchPlugin} from "./plugins/fetch-plugin";
 
 let initialized = false;
 
-export default async (rawCode: string) => {
+const bundle = async (rawCode: string) => {
   // initialize esbuild
   if (!initialized) {
     await esbuild.initialize({
@@ -27,3 +27,5 @@ export default async (rawCode: string) => {
   return result.outputFiles[0].text;
 
 }
+
+export default bundle;
