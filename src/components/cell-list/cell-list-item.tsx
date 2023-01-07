@@ -2,7 +2,7 @@ import React, {FC} from 'react';
 import {Cell} from "../../store/cellSlice";
 import CodeCell from "../code-cell/code-cell";
 import TextEditor from "../text-editor/text-editor";
-import ActionBar from "../action-bar/actionBar";
+import ActionBar from "../action-bar/action-bar";
 
 interface CellListItemProps {
   cell: Cell;
@@ -18,9 +18,11 @@ const CellListItem: FC<CellListItemProps> = ({cell}) => {
   }
 
   return (
-    <div className={'group/editor shadow-md shadow-gray-800 '}>
+    <div className={'relative group/action-bar'}>
       <ActionBar id={id}/>
-      {child}
+      <div className={'group/editor shadow-md shadow-gray-800 '}>
+        {child}
+      </div>
     </div>
   );
 };

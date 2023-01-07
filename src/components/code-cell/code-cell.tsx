@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import CodeEditor from "../code-editor/code-editor";
 import Preview from "../preview/preview";
 import Resizable from "../resizable/resizable";
@@ -9,21 +9,15 @@ interface CodeCellProps {
 }
 
 const CodeCell: FC<CodeCellProps> = ({cell}) => {
-  const [code, setCode] = useState<string>("");
-  const [bundleErr, setBundleErr] = useState<string | null>(null);
 
   return (
     <div className={'h-full pb-2 transition'}>
       <Resizable direction={"vertical"}>
         <div className={'flex h-full'}>
           <Resizable direction={"horizontal"}>
-            <CodeEditor
-              cell={cell}
-              setCode={setCode}
-              setBundleErr={setBundleErr}
-            />
+            <CodeEditor cell={cell} />
           </Resizable>
-          <Preview code={code} bundleErr={bundleErr}/>
+          <Preview cell={cell}/>
         </div>
       </Resizable>
     </div>

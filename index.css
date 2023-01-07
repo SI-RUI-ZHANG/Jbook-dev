@@ -4,11 +4,22 @@
 
 @layer components {
     .btn-group-fade {
-        @apply text-black text-sm bg-amber-500 px-1 opacity-0
+        @apply text-black text-sm bg-amber-500 px-1 opacity-0 rounded-sm
         group-hover/editor:opacity-100 group-hover/editor:brightness-50 transition duration-200 font-medium
         hover:!opacity-100 hover:!brightness-100 active:bg-red-500
     }
     .fade {
         @apply z-0 relative transition duration-200
+    }
+    .action-bar-btn {
+        @apply w-5 h-4 cursor-pointer block brightness-50 hover:brightness-100 transition duration-200
+    }
+    .add-cell-group {
+        @apply relative w-full text-sm flex flex-row justify-center gap-x-5 text-white opacity-0
+        hover:opacity-100 hover:brightness-100 transition duration-200
+    }
+    .add-cell-btn {
+        @apply z-20 bg-neutral-600 border border-neutral-400 rounded px-2 shadow-sm shadow-gray-800
+        hover:bg-neutral-500 active:bg-neutral-700 transition-colors duration-75
     }
 }

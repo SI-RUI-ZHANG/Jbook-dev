@@ -1,27 +1,32 @@
 import MonacoEditor from '@monaco-editor/react';
-import React, {FC, useRef} from 'react';
+import React, {FC, useEffect, useRef} from 'react';
 import {editor} from "monaco-editor";
 import {useCallback} from "react";
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
-import {useAppDispatch} from "../../store/hooks";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {Cell, updateCell} from "../../store/cellSlice";
+import {createBundle} from "../../store/bundleSlice";
 import './code-editor.scss';
 import {
   MonacoJsxSyntaxHighlight,
   getWorker
 } from "monaco-jsx-syntax-highlight";
-import bundler from "../../bundler";
-
 
 interface CodeEditorProps {
-  setCode: React.Dispatch<string>;
   cell: Cell;
-  setBundleErr: React.Dispatch<string | null>;
 }
 
-const CodeEditor: FC<CodeEditorProps> = ({setCode, setBundleErr, cell}) => {
+const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
   const dispatch = useAppDispatch();
+  const code = useAppSelector(state => state.cells.data[cell.id].content);
+  const bundle = useAppSelector(state => state.bundles[cell.id]);
+
+  useEffect(() => {
+    if (!bundle) {
+      dispatch(createBundle({cellId: cell.id, input: code}));
+    }
+  }, []);
 
   const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
     editorRef.current = editor;
@@ -31,26 +36,13 @@ const CodeEditor: FC<CodeEditorProps> = ({setCode, setBundleErr, cell}) => {
       esModuleInterop: true
     });
 
-    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
-      getWorker(),
-      monaco
-    );
-
+    const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(getWorker(), monaco);
     // editor is the result of monaco.editor.create
-    const {
-      highlighter,
-      dispose
-    } = monacoJsxSyntaxHighlight.highlighterBuilder({
-      editor: editor
-    });
+    const {highlighter, dispose} = monacoJsxSyntaxHighlight.highlighterBuilder({editor: editor});
     // init highlight
     highlighter();
-
-    editor.onDidChangeModelContent(() => {
-      // content change, highlight
-      highlighter();
-    });
-
+    // content change highlight
+    editor.onDidChangeModelContent(() => { highlighter(); });
     return dispose;
   }, []);
 
@@ -62,13 +54,7 @@ const CodeEditor: FC<CodeEditorProps> = ({setCode, setBundleErr, cell}) => {
   };
 
   const onCodeRunHandler = async () => {
-    const output = await bundler(cell.content);
-    if (output.err) {
-      setCode('');
-      return setBundleErr(output.result);
-    }
-    setBundleErr(null);
-    setCode(output.result);
+    dispatch(createBundle({cellId: cell.id, input: code}));
   };
 
 
@@ -103,7 +89,7 @@ const CodeEditor: FC<CodeEditorProps> = ({setCode, setBundleErr, cell}) => {
           fontSize: 16,
           scrollBeyondLastLine: false,
           automaticLayout: true,
-          padding: {top: 5, bottom: 5,}
+          padding: {top: 15, bottom: 5,}
         }}
       />
     </div>

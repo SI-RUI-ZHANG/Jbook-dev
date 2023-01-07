@@ -75,9 +75,9 @@ const cellSlice = createSlice({
       cellState.data[cell.id] = cell;
       // Find the index of the cell we want to insert after
       const index = cellState.order.findIndex((cellId) => cellId === id);
-      // If the index is -1, we want to insert the cell at the end
+      // If the index is -1, we want to insert the cell at the beginning
       if (index < 0) {
-        cellState.order.push(cell.id);
+        cellState.order.unshift(cell.id);
       } else {
         cellState.order.splice(index + 1, 0, cell.id);
       }
@@ -89,6 +89,9 @@ const cellSlice = createSlice({
   },
 });
 
+// Export the reducer
+export default cellSlice.reducer;
+
 // Export the actions
 export const {
   moveCell,
@@ -98,5 +101,3 @@ export const {
   deleteCell
 } = cellSlice.actions;
 
-// Export the reducer
-export default cellSlice.reducer;

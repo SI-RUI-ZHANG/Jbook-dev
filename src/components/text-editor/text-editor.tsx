@@ -47,7 +47,7 @@ const TextEditor: FC<TextEditorProps> = ({cell}) => {
       onClick={() => {setEditing(true);}}
       className={'text-editor'}
     >
-      <MDEditor.Markdown source={content || '*Click to edit*'}/>
+      <MDEditor.Markdown source={content || '## Click to edit'}/>
     </div>
   );
 };

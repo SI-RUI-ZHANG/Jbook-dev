@@ -1,9 +1,10 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
-import './preview.css'
+import {Cell} from "../../store/cellSlice";
+import {useAppSelector} from "../../store/hooks";
+import './preview.css';
 
 interface PreviewProps {
-  code: string;
-  bundleErr: string | null;
+  cell: Cell;
 }
 
 const html = `
@@ -36,32 +37,36 @@ window.addEventListener('message', (event) => {
 </html>
 `;
 
-const Preview: FC<PreviewProps> = ({code, bundleErr}) => {
+const Preview: FC<PreviewProps> = ({cell}) => {
   const iframe = useRef<any>();
-  const [hide, setHide] = useState<boolean>(true);
+  const [showLoading, setShowLoading] = useState<boolean>(true);
+  const bundle = useAppSelector(state => state.bundles[cell.id]);
 
   useEffect(() => {
-    setHide(true);
+    setShowLoading(true);
     iframe.current.srcdoc = html;
     setTimeout(() => {
-      iframe.current.contentWindow.postMessage(code, '*');
-    }, 30)
+      iframe.current.contentWindow.postMessage(bundle?.result, '*');
+    }, 30);
 
     setTimeout(() => {
-      setHide(false);
-    },50)
-  }, [code]);
+      setShowLoading(false);
+    }, 50);
+  }, [bundle]);
 
   return (
-    <div className={'relative iframe-wrapper grow h-full bg-neutral-800'}>
+    <div className={'relative iframe-wrapper grow h-full bg-neutral-800 z-20'}>
       <iframe
-        style={{visibility: hide ? 'hidden' : 'visible'}}
         className={`h-full w-full bg-neutral-800 relative`}
         ref={iframe}
         sandbox={"allow-scripts"}
         srcDoc={html}
       />
-      {bundleErr && <div className={'preview-error'}>{bundleErr}</div>}
+      {(showLoading || (bundle && bundle.loading)) &&
+        <div className={'absolute top-0 left-0 w-full h-full bg-neutral-800 z-40'}>
+          <h1>Loading</h1>
+        </div>}
+      {bundle?.err && <div className={'preview-error'}>{bundle?.result}</div>}
     </div>
   );
 };
