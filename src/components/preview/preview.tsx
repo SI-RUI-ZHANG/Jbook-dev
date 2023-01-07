@@ -55,7 +55,7 @@ const Preview: FC<PreviewProps> = ({code, bundleErr}) => {
   return (
     <div className={'relative iframe-wrapper grow h-full bg-neutral-800'}>
       <iframe
-        style={{display: hide ? 'none' : 'block'}}
+        style={{visibility: hide ? 'hidden' : 'visible'}}
         className={`h-full w-full bg-neutral-800 relative`}
         ref={iframe}
         sandbox={"allow-scripts"}

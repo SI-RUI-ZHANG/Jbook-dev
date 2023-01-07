@@ -1,8 +1,10 @@
-import MonacoEditor, {OnChange} from '@monaco-editor/react';
+import MonacoEditor from '@monaco-editor/react';
 import React, {FC, useRef} from 'react';
 import {editor} from "monaco-editor";
 import {useCallback} from "react";
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
+import {useAppDispatch} from "../../store/hooks";
+import {Cell, updateCell} from "../../store/cellSlice";
 import './code-editor.scss';
 import {
   MonacoJsxSyntaxHighlight,
@@ -12,15 +14,14 @@ import bundler from "../../bundler";
 
 
 interface CodeEditorProps {
-  initialValue: string;
-
   setCode: React.Dispatch<string>;
+  cell: Cell;
   setBundleErr: React.Dispatch<string | null>;
 }
 
-const CodeEditor: FC<CodeEditorProps> = ({initialValue, setCode, setBundleErr}) => {
+const CodeEditor: FC<CodeEditorProps> = ({setCode, setBundleErr, cell}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
-  const [input, setInput] = React.useState(initialValue);
+  const dispatch = useAppDispatch();
 
   const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
     editorRef.current = editor;
@@ -53,10 +54,6 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, setCode, setBundleErr}) 
     return dispose;
   }, []);
 
-  const onChangeHandler: OnChange = (value) => {
-    setInput(value ?? '');
-  };
-
   const onFormatHandler = () => {
     if (!editorRef.current) {
       return;
@@ -65,40 +62,37 @@ const CodeEditor: FC<CodeEditorProps> = ({initialValue, setCode, setBundleErr}) 
   };
 
   const onCodeRunHandler = async () => {
-    const output = await bundler(input);
+    const output = await bundler(cell.content);
     if (output.err) {
       setCode('');
       return setBundleErr(output.result);
     }
     setBundleErr(null);
     setCode(output.result);
-  }
+  };
+
+
   return (
     <div className={'group/editor fade h-full w-[calc(100%-2px)]'}>
       <div className={'absolute z-10 right-2 bottom-2 flex gap-1'}>
-        <button
-          onClick={onCodeRunHandler}
-          className={`btn-group-fade`}
-        >
+        <button onClick={onCodeRunHandler} className={`btn-group-fade`}>
           RUN
         </button>
-        <button
-          onClick={onFormatHandler}
-          className={`btn-group-fade`}
-        >
+        <button onClick={onFormatHandler} className={`btn-group-fade`}>
           FORMAT
         </button>
       </div>
       <MonacoEditor
         className={'editor'}
-        onChange={onChangeHandler}
-        // onMount={(editor) => {editorRef.current = editor;}}
+        onChange={(value) => {
+          dispatch(updateCell({id: cell.id, content: value ?? ''}));
+        }}
         onMount={handleEditorDidMount}
-        value={initialValue}
+        value={cell.content}
         height={'100%'}
         language={'typescript'}
         theme={'vs-dark'}
-        path={"file:///index.tsx"}
+        path={`file:///${cell.id}.tsx`}
         options={{
           minimap: {enabled: false},
           wordWrap: 'on',

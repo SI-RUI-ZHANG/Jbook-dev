@@ -1,11 +1,19 @@
 import React, {FC, useState, useEffect, useRef} from 'react';
 import MDEditor from "@uiw/react-md-editor";
 import './text-editor.css';
+import {Cell} from "../../store/cellSlice";
+import {useAppDispatch} from "../../store/hooks";
+import {updateCell} from "../../store/cellSlice";
 
-const TextEditor: FC = () => {
+interface TextEditorProps {
+  cell: Cell;
+}
+
+const TextEditor: FC<TextEditorProps> = ({cell}) => {
+  const {id, content} = cell;
   const ref = useRef<HTMLDivElement | null>(null);
-  const [value, setValue] = useState<string | undefined>('# Header');
   const [editing, setEditing] = useState(false);
+  const dispatch = useAppDispatch();
 
 
   useEffect(() => {
@@ -20,27 +28,26 @@ const TextEditor: FC = () => {
 
     return () => {
       document.removeEventListener('click', listener, {capture: true});
-    }
-  }, [])
+    };
+  }, []);
 
   if (editing) {
     return (
-      <div id={'text-editor'} ref={ref} className={'shadow-md shadow-gray-800 text-editor'}>
+      <div id={'text-editor'} ref={ref} className={'text-editor'}>
         <MDEditor
-          height={200}
-          value={value}
-          onChange={setValue}
+          value={content}
+          onChange={(value) => {dispatch(updateCell({id, content: value ?? ''}));}}
         />
       </div>
-    )
+    );
   }
 
   return (
     <div
-      onClick={() => {setEditing(true)}}
-      className={'shadow-md shadow-gray-800 text-editor'}
+      onClick={() => {setEditing(true);}}
+      className={'text-editor'}
     >
-      <MDEditor.Markdown source={value}/>
+      <MDEditor.Markdown source={content || '*Click to edit*'}/>
     </div>
   );
 };
