@@ -2,6 +2,8 @@ import React, {FC, useEffect, useRef, useState} from 'react';
 import {Cell} from "../../store/cellSlice";
 import {useAppSelector} from "../../store/hooks";
 import './preview.css';
+import loader from "../loader/loader";
+import Loader from "../loader/loader";
 
 interface PreviewProps {
   cell: Cell;
@@ -63,9 +65,12 @@ const Preview: FC<PreviewProps> = ({cell}) => {
         srcDoc={html}
       />
       {(showLoading || (bundle && bundle.loading)) &&
-        <div className={'absolute top-0 left-0 w-full h-full bg-neutral-800 z-40'}>
-          <h1>Loading</h1>
-        </div>}
+      <div className={'bg-neutral-800 absolute top-0 bottom-0 left-0 right-0'}>
+        <div className={'relative w-full h-full flex items-center'}>
+          <Loader/>
+        </div>
+      </div>
+      }
       {bundle?.err && <div className={'preview-error'}>{bundle?.result}</div>}
     </div>
   );

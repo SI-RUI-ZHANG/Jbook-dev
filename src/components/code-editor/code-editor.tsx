@@ -1,5 +1,5 @@
 import MonacoEditor from '@monaco-editor/react';
-import React, {FC, useEffect, useRef} from 'react';
+import React, {FC, useRef} from 'react';
 import {editor} from "monaco-editor";
 import {useCallback} from "react";
 import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
@@ -20,13 +20,6 @@ const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
   const dispatch = useAppDispatch();
   const code = useAppSelector(state => state.cells.data[cell.id].content);
-  const bundle = useAppSelector(state => state.bundles[cell.id]);
-
-  useEffect(() => {
-    if (!bundle) {
-      dispatch(createBundle({cellId: cell.id, input: code}));
-    }
-  }, []);
 
   const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
     editorRef.current = editor;
@@ -59,7 +52,7 @@ const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
 
 
   return (
-    <div className={'group/editor fade h-full w-[calc(100%-2px)]'}>
+    <div className={'group/editor fade h-full w-[calc(100%-3px)]'}>
       <div className={'absolute z-10 right-2 bottom-2 flex gap-1'}>
         <button onClick={onCodeRunHandler} className={`btn-group-fade`}>
           RUN

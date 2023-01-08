@@ -21,13 +21,13 @@
 .react-resizable-handle-s {
     margin-top: 3px;
     display: block;
-    height: 2px;
+    height: 3px;
     width: 100%;
     cursor: row-resize;
 }
 
 .react-resizable-handle-e {
-    width: 2px;
+    width: 3px;
     height: 100%;
     cursor: col-resize;
 }

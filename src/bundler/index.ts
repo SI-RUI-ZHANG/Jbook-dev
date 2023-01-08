@@ -12,11 +12,11 @@ type bundleResult = Promise<{
 const bundle = async (rawCode: string): bundleResult => {
   // initialize esbuild
   if (!initialized) {
+    initialized = true;
     await esbuild.initialize({
       worker: true,
       wasmURL: '/node_modules/esbuild-wasm/esbuild.wasm',
     });
-    initialized = true;
   }
 
   let result: esbuild.BuildResult;
