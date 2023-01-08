@@ -12,7 +12,7 @@ const Resizable: FC<ResizableProps> = ({direction, children}) => {
   let resizableProps: ResizableBoxProps;
   const [innerWidth, setInnerWidth] = useState<number>(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState<number>(window.innerHeight);
-  const [width, setWidth] = useState<number>(window.innerWidth * 0.70);
+  const [width, setWidth] = useState<number>(window.innerWidth * 0.5);
 
   useEffect(() => {
     let timer: any;
@@ -51,7 +51,7 @@ const Resizable: FC<ResizableProps> = ({direction, children}) => {
     resizableProps = {
       minConstraints: [Infinity, 40],
       maxConstraints: [Infinity, window.innerHeight * 0.9],
-      height: 180,
+      height: 230,
       width: Infinity,
       resizeHandles: ['s'],
     };

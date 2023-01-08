@@ -2,7 +2,6 @@ import React, {FC, useEffect, useRef, useState} from 'react';
 import {Cell} from "../../store/cellSlice";
 import {useAppSelector} from "../../store/hooks";
 import './preview.css';
-import loader from "../loader/loader";
 import Loader from "../loader/loader";
 
 interface PreviewProps {
@@ -41,10 +40,14 @@ window.addEventListener('message', (event) => {
 
 const Preview: FC<PreviewProps> = ({cell}) => {
   const iframe = useRef<any>();
-  const [showLoading, setShowLoading] = useState<boolean>(true);
+  const [showLoading, setShowLoading] = useState<boolean>(false);
   const bundle = useAppSelector(state => state.bundles[cell.id]);
 
   useEffect(() => {
+
+    // if bundle failed, return immediately
+    if (bundle && bundle.err || !bundle) return;
+
     setShowLoading(true);
     iframe.current.srcdoc = html;
     setTimeout(() => {
@@ -65,11 +68,11 @@ const Preview: FC<PreviewProps> = ({cell}) => {
         srcDoc={html}
       />
       {(showLoading || (bundle && bundle.loading)) &&
-      <div className={'bg-neutral-800 absolute top-0 bottom-0 left-0 right-0'}>
-        <div className={'relative w-full h-full flex items-center'}>
-          <Loader/>
+        <div className={'bg-neutral-800 absolute top-0 bottom-0 left-0 right-0'}>
+          <div className={'relative w-full h-full flex items-center'}>
+            <Loader/>
+          </div>
         </div>
-      </div>
       }
       {bundle?.err && <div className={'preview-error'}>{bundle?.result}</div>}
     </div>

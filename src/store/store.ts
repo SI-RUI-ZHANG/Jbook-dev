@@ -1,8 +1,5 @@
 import {Action, configureStore, ThunkAction} from "@reduxjs/toolkit";
 import rootReducer from "./reducers";
-import {
-  insertCellAfter
-} from './cellSlice';
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -18,7 +15,3 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
-store.dispatch(insertCellAfter({id: null, type: 'code'}));
-store.dispatch(insertCellAfter({id: null, type: 'text'}));
-store.dispatch(insertCellAfter({id: null, type: 'code'}));
-// store.dispatch(insertCellAfter({id: null, type: 'code'}));

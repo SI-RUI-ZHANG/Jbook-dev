@@ -14,7 +14,7 @@ const CellList: FC = () => {
   );
 
   return (
-    <div className={`flex flex-col gap-2 `}>
+    <div className={`flex flex-col gap-2`}>
       <AddCell forceVisible={cells.length === 0} nextCellId={null}/>
       {renderedCells}
     </div>

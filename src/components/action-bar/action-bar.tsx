@@ -20,7 +20,7 @@ const ActionBar: FC<ActionBarProps> = ({id}) => {
   };
 
   return (
-    <div className={`opacity-0 absolute rounded px-2 py-[2px] z-40 left-[55%] -top-2 shadow-md shadow-black
+    <div className={`opacity-0 absolute rounded px-2 py-[2px] z-40 left-0 -top-4 shadow-md shadow-black
         flex flex-row gap-4
         bg-neutral-800 text-amber-50 text-sm
         group-hover/action-bar:opacity-100 transition duration-200

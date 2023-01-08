@@ -6,6 +6,7 @@ import IStandaloneCodeEditor = editor.IStandaloneCodeEditor;
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {Cell, updateCell} from "../../store/cellSlice";
 import {createBundle} from "../../store/bundleSlice";
+import {useCumulativeCode} from "../../hooks/use-cumulative-code";
 import './code-editor.scss';
 import {
   MonacoJsxSyntaxHighlight,
@@ -16,10 +17,12 @@ interface CodeEditorProps {
   cell: Cell;
 }
 
+
 const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
   const editorRef = useRef<IStandaloneCodeEditor>();
   const dispatch = useAppDispatch();
   const code = useAppSelector(state => state.cells.data[cell.id].content);
+  const cumulativeCode = useCumulativeCode(cell.id);
 
   const handleEditorDidMount = useCallback((editor: any, monaco: any) => {
     editorRef.current = editor;
@@ -47,7 +50,10 @@ const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
   };
 
   const onCodeRunHandler = async () => {
-    dispatch(createBundle({cellId: cell.id, input: code}));
+    dispatch(createBundle({
+      cellId: cell.id,
+      input: cumulativeCode
+    }));
   };
 
 
@@ -69,9 +75,9 @@ const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
         onMount={handleEditorDidMount}
         value={cell.content}
         height={'100%'}
-        language={'typescript'}
+        language={'javascript'}
         theme={'vs-dark'}
-        path={`file:///${cell.id}.tsx`}
+        path={`file:///${cell.id}.jsx`}
         options={{
           minimap: {enabled: false},
           wordWrap: 'on',

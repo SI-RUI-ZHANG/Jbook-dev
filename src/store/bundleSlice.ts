@@ -6,18 +6,12 @@ export const createBundle = createAsyncThunk(
   "bundles/createBundle",
   async (arg: { cellId: string; input: string }, thunkAPI) => {
     thunkAPI.dispatch(bundleStart({cellId: arg.cellId}));
-    try {
-      const bundleResult = await bundle(arg.input);
-      thunkAPI.dispatch(bundleComplete({cellId: arg.cellId, bundle: bundleResult}));
-    } catch (err) {
-      let message = ''
-      if (err instanceof Error) {
-        message = err.message;
-      } else {
-        console.error(err);
-      }
-      thunkAPI.dispatch(bundleError({cellId: arg.cellId, bundle: {err: true, result: message}}));
+    const bundleResult = await bundle(arg.input);
+    if (bundleResult.err) {
+      thunkAPI.dispatch(bundleError({cellId: arg.cellId, bundle: bundleResult}));
+      return;
     }
+    thunkAPI.dispatch(bundleComplete({cellId: arg.cellId, bundle: bundleResult}));
   }
 );
 

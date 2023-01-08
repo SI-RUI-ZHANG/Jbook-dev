@@ -6,9 +6,9 @@ export const unpkgPathPlugin = () => {
     name: 'unpkg-path-plugin',
     // build: represents the bundling process
     setup(build: esbuild.PluginBuild) {
-      // handle root entry file of 'index.ts'
-      build.onResolve({ filter: /^index\.ts$/ }, () => {
-        return { path: 'index.ts', namespace: 'a' };
+      // handle root entry file of 'index.js'
+      build.onResolve({ filter: /^index\.js$/ }, () => {
+        return { path: 'index.js', namespace: 'a' };
       });
 
       // handle relative paths in a module

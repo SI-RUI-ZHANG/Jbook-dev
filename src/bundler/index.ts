@@ -23,14 +23,22 @@ const bundle = async (rawCode: string): bundleResult => {
 
   try {
     result = await esbuild.build({
-      entryPoints: ['index.ts'],
+      entryPoints: ['index.js'],
       bundle: true,
       write: false,
       plugins: [
         unpkgPathPlugin(),
         fetchPlugin(rawCode)
       ],
+      jsxFactory: '_React.createElement',
+      jsxFragment: '_React.Fragment',
     });
+
+    return {
+      result: result.outputFiles ? result.outputFiles[0].text : '',
+      err: false
+    };
+
   } catch (err) {
     if (err instanceof Error) {
       return {
@@ -38,13 +46,12 @@ const bundle = async (rawCode: string): bundleResult => {
         err: true
       };
     }
-    throw err;
   }
 
   return {
-    result: result.outputFiles ? result.outputFiles[0].text : '',
-    err: false
-  };
+    result: 'Unknown error',
+    err: true
+  }
 
 };
 
