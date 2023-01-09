@@ -10,7 +10,7 @@ export const fetchPlugin = (inputCode: string) => {
   return {
     name: 'fetch-plugin',
     setup(build: esbuild.PluginBuild) {
-      // handle root entry file of 'index.js'
+      // handle root entry file of 'index.ts'
       build.onLoad({filter: /(^index\.js$)/}, async (args: any) => {
         return {
           loader: 'tsx',
