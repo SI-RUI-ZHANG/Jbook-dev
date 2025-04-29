@@ -75,7 +75,7 @@ const CodeEditor: FC<CodeEditorProps> = ({cell}) => {
         onMount={handleEditorDidMount}
         value={cell.content}
         height={'100%'}
-        language={'javascript'}
+        language={'typescript'}
         theme={'vs-dark'}
         path={`file:///${cell.id}.jsx`}
         options={{
