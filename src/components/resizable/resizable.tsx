@@ -44,7 +44,7 @@ const Resizable: FC<ResizableProps> = ({direction, children}) => {
       width: width,
       resizeHandles: ['e'],
       onResizeStop: (event, data) => {
-        setInnerWidth(data.size.width);
+        setWidth(data.size.width);
       },
     };
   } else {
@@ -60,8 +60,8 @@ const Resizable: FC<ResizableProps> = ({direction, children}) => {
   return (
     <ResizableBox {...resizableProps}>
       {children}
-    </ResizableBox>)
-    ;
+    </ResizableBox>
+  );
 };
 
 export default Resizable;
