@@ -14,7 +14,7 @@ const html = `
 <body>
 <div id="root"></div>
 <script>
-<!-- receive message event posted my parent frame --> 
+<!-- receive message event posted by parent frame -->
 const handleError = (err) => {
   const root = document.querySelector('#root');
   root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
